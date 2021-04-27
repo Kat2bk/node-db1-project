@@ -16,9 +16,12 @@ const getById = id => {
   // get the first one by db('accounts').where().first()
 }
 
-const create = account => {
+async function create(account) {
   // DO YOUR MAGIC
-  return db('accounts').insert(account)
+  const [id] = await db('accounts').insert(account, ['id', 'name', 'budget'])
+  return getById(id)
+  // return db('accounts').insert(account)
+
   // if wanting returned values...
   // db('accounts').insert(account, ['id'])
   // only postgres can return more values than id
@@ -32,17 +35,16 @@ const create = account => {
     //return getById(id)
 }
 
-const updateById = (id, account) => {
+async function updateById(id, account) {
   // DO YOUR MAGIC
-  return db('accounts').where({id}).update(account)
-
-  //async/await
-  //return getById(id)
+  await db('accounts').where({id}).update(account, ['name', 'budget'])
+  return getById(id)
+  // return db('accounts').where({id}).update(account)
 }
 
-const deleteById = id => {
+async function deleteById(id) {
   // DO YOUR MAGIC
-  return db('accounts').where({id}).del()
+   await db('accounts').where('id', id).del()
 }
 
 module.exports = {
