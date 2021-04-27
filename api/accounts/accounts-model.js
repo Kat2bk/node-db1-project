@@ -11,6 +11,7 @@ const getById = id => {
   // never use interpolation directly inside a 
   // db.raw(SQL)... if you need to use
   // db.raw(`SELECT * FROM posts WHERE id = ?`, [id])
+  // you don't want a SQL attack
   return db('accounts').where('id', id)
   // get the first one by db('accounts').where().first()
 }
