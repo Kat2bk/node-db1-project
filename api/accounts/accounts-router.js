@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const Accounts = require('./accounts-model');
-const {checkAccountPayload} = require('./accounts-middleware');
+const {checkAccountPayload, checkAccountNameUnique} = require('./accounts-middleware');
+const checkAccountId = require('./checkAccountId');
+const _ = require('lodash');
 
 router.get('/', async  (req, res, next) => {
   // DO YOUR MAGIC
@@ -12,17 +14,23 @@ router.get('/', async  (req, res, next) => {
   }
 })
 
-router.get('/:id', async (req, res, next) => {
-  // DO YOUR MAGIC
+router.get('/:id', checkAccountId, async (req, res, next) => {
+  const id = req.params.id;
+
   try {
-    const account = await Accounts.getById(req.params.id)
-    res.json(account)
+    const account = await Accounts.getById(id)
+    if (!account) {
+      res.status(404).send({message: "account doesn't exist"})
+    } else {
+      res.status(200).json(account)
+    }
   } catch (error) {
     next(error)
   }
+
 })
 
-router.post('/', checkAccountPayload, async (req, res, next) => {
+router.post('/', checkAccountPayload, checkAccountNameUnique, async (req, res, next) => {
   try {
     const newAccount = await Accounts.create(req.body)
     res.status(201).json(newAccount)

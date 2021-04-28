@@ -1,3 +1,5 @@
+const Accounts = require('./accounts-model');
+
 exports.checkAccountPayload = (req, res, next) => {
   const {name, budget} = req.body;
 
@@ -18,9 +20,47 @@ exports.checkAccountPayload = (req, res, next) => {
 }
 
 exports.checkAccountNameUnique = (req, res, next) => {
-  // DO YOUR MAGIC
+  const {name} = req.body;
+ 
+  Accounts.getAll()
+  .then(account => {
+    // account.find(name)
+      if (account.length !== 0) {
+        if (account[0].name) {
+          res.status(400).json({message: "name already exist"})
+        }
+      }
+  })
+  .catch(error => {
+    next(error)
+  })
 }
 
-exports.checkAccountId = (req, res, next) => {
-  // DO YOUR MAGIC
-}
+// exports.checkAccountId = async (req, res, next) => {
+//  const account = await Accounts.getById(req.params.id)
+//  if (account) {
+//    req.account = account
+//    next()
+//  } else if (!account) {
+//    res.status(404).json({message: "account not found"})
+//  }
+// }
+
+// function checkAccountId() {
+//   return (req, res, next) => {
+//    Accounts.getById(req.params.id)
+//     .then(account => {
+//       if (account) {
+//         req.account = account
+//         next()
+//       } else if (!account) {
+//         res.status(404).json({message: "account not found"})
+//       }
+//     })
+//     .catch (error => {
+//       next(error)
+//     })
+//   }
+// }
+
+// module.exports = checkAccountId;
